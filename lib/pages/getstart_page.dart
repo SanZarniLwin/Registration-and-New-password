@@ -14,64 +14,68 @@ class _GetstartPageState extends State<GetstartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.only(left: 60, right: 60,),
-        color: const Color.fromARGB(183, 236, 243, 228),
+        alignment: Alignment.center,
+        color: Colors.white,
+        padding: EdgeInsets.fromLTRB(30, 45, 30, 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 70),
-            Container(
-              width: 1300,
-              child: Text(
-                "Make payments anywhere",
-                style: KTextStyle.getStart1,
+            Text(
+              'Make payments anywhere\nwith any currency',
+              style: TextStyle(
+                fontSize: 32,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
               ),
             ),
-            //SizedBox(height: 10),
-            Container(
-              width: 1300,
-              child: Text(
-                'with any currency',
-                style: KTextStyle.getStart1,
+            SizedBox(height: 10,),
+            Text(
+              'Shop the world without restrictions',
+              style: TextStyle(
+                fontSize: 20,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w300,
+                color: Color.fromRGBO(96, 96, 96, 1)
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 35,),
+            Image.asset('assets/images/welcome.png'),
+            SizedBox(height: 10,),
             Container(
-              width: 1300,
-              child: Text(
-                'Shop the world without restrictions',
-                style: KTextStyle.getStart2,
-              ),
+              height: 5,
+              width: 70,
+              color: Color.fromRGBO(102, 103, 170, 1),
             ),
-            SizedBox(height: 20),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Image(
-                image: AssetImage('assets/images/welcome.jpg'),
-                height: 300,
-              ),
-            ),
-            SizedBox(height: 40),
-            FilledButton(
-                  style: FilledButton.styleFrom(
-                    fixedSize: Size(1300, 50),
-                    backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context, MaterialPageRoute(
-                        builder: (context) {
-                          return const RegistrationPage();
-                        },
-                      )
-                    );
-                  },
-                  child: Text("Get Started")
+            SizedBox(height: 40,),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context, MaterialPageRoute(
+                    builder: (context) {
+                      return RegistrationPage();
+                    },
+                  )
+                );
+              },
+              child: Container(
+                alignment: Alignment.center,
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(9),
+                  color: Color.fromRGBO(102, 103, 170, 1)
                 ),
+                child: Text(
+                  'Get Started',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white
+                  ),
+                )
+              ),
+            )
           ],
         ),
       ),

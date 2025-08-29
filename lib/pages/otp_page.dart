@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_forgetpassword/data/constant.dart';
 import 'package:registration_forgetpassword/pages/ID_verify_page.dart';
 import 'package:registration_forgetpassword/pages/registration_page.dart';
 
@@ -17,65 +16,119 @@ class _OTPPageState extends State<OTPPage> {
       body: Column(
         children: [
           Container(
-            height: 220,
-            color: Colors.deepPurple.shade400,
-            padding: const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
+            padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/otpBg.png'),
+                fit: BoxFit.fitWidth,
+              )
+            ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) => RegistrationPage(),
-                        )
-                      );
-                    }, 
-                    icon: Icon(Icons.arrow_back, color: Colors.white,)
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context, MaterialPageRoute(
+                        builder: (context) {
+                          return RegistrationPage();
+                        },
+                      )
+                    );
+                  }, 
+                  icon: Image.asset('assets/images/back.png')
+                ),
+                SizedBox(height: 20,),
+                Text(
+                  'OTP Verification',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white
                   ),
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'OTP Verification',
-                    style: KTextStyle.regi1,
-                    )
+                SizedBox(height: 8,),
+                Text(
+                  'We have sent you a SMS on your phone\nnumber',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white
+                  ),
                 ),
-                SizedBox(height: 15,),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'We have sent you a SMS on your phone\nnumber',
-                    style: KTextStyle.regi2,
-                  )
+                SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border(
+                          right: BorderSide(
+                            color: Colors.white,
+                          )
+                        )
+                      ),
+                      child: Text(
+                        '1/3',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
           ),
           Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(40),
             alignment: Alignment.center,
             child: Column(
-              spacing: 30,
+              spacing: 20,
               children: [
-                Text('09*****648'),
+                Text(
+                  '09*****648',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w300,
+                    color: Color.fromRGBO(96, 96, 96, 1)
+                  ),
+                ),
                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Enter OTP',
                     border: OutlineInputBorder(),
                   ),
                 ),
-                Text('If you don\'t receive the code!'),
-                Text('Resend OTP(59s)'),
-                SizedBox(height: 60),
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      fixedSize: Size(1300, 50),
+                Text(
+                  'If you don\'t receive the code!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w300,
+                    color: Color.fromRGBO(96, 96, 96, 1)
                   ),
-                  onPressed: () {
+                ),
+                Text(
+                  'Resend OTP(59s)',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w300,
+                    color: Color.fromRGBO(102, 103, 170, 1)
+                  ),
+                ),
+                SizedBox(height: 40),
+                GestureDetector(
+                  onTap: () {
                     Navigator.push(
                       context, MaterialPageRoute(
                         builder: (context) {
@@ -83,8 +136,25 @@ class _OTPPageState extends State<OTPPage> {
                         },
                       )
                     );
-                  }, 
-                  child: Text('Next')
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color.fromRGBO(102, 103, 170, 1)
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    )
+                  ),
                 ),
               ],
             ),
