@@ -10,6 +10,17 @@ class OTPPage extends StatefulWidget {
 }
 
 class _OTPPageState extends State<OTPPage> {
+
+  TextEditingController otpController = TextEditingController();
+
+  String confirmOTP = '1234';
+
+  @override
+  void dispose() {
+    otpController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +114,7 @@ class _OTPPageState extends State<OTPPage> {
                   ),
                 ),
                 TextField(
+                  controller: otpController,
                   decoration: InputDecoration(
                     labelText: 'Enter OTP',
                     border: OutlineInputBorder(),
@@ -129,13 +141,20 @@ class _OTPPageState extends State<OTPPage> {
                 SizedBox(height: 40),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context, MaterialPageRoute(
-                        builder: (context) {
-                          return const IdVerifyPage();
-                        },
-                      )
-                    );
+                    if (confirmOTP == otpController.text.trim()) {
+                      Navigator.pushAndRemoveUntil(
+                        context, MaterialPageRoute(
+                          builder: (context) {
+                            return IdVerifyPage();
+                          },
+                        ),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Invalid OTP, please try again'))
+                      );
+                    }
                   },
                   child: Container(
                     alignment: Alignment.center,

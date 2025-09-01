@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_forgetpassword/data/constant.dart';
 import 'package:registration_forgetpassword/pages/registration_page.dart';
 
 class GetstartPage extends StatefulWidget {

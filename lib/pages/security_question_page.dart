@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_forgetpassword/data/constant.dart';
 import 'package:registration_forgetpassword/pages/ID_verify_page.dart';
 import 'package:registration_forgetpassword/pages/new_pw_page.dart';
 
@@ -12,11 +11,15 @@ class SecurityQuestionPage extends StatefulWidget {
 
 class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
   int expandedIndex = 1;
-  final TextEditingController answerCtrl = TextEditingController();
+  final TextEditingController colorCtrl = TextEditingController();
+  final TextEditingController foodCtrl = TextEditingController();
+  final TextEditingController personCtrl = TextEditingController();
 
   @override
   void dispose() {
-    answerCtrl.dispose();
+    colorCtrl.dispose();
+    foodCtrl.dispose();
+    personCtrl.dispose();
     super.dispose();
   }
 
@@ -24,141 +27,255 @@ class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 220,
-              color: Colors.deepPurple.shade400,
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/otpBg.png'),
+                    fit: BoxFit.fitWidth,
+                  )
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context, MaterialPageRoute(
-                            builder: (context) => IdVerifyPage(),
+                            builder: (context) {
+                              return IdVerifyPage();
+                            },
                           )
                         );
                       }, 
-                      icon: Icon(Icons.arrow_back, color: Colors.white,)
+                      icon: Image.asset('assets/images/back.png')
                     ),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Text(
+                    SizedBox(height: 20,),
+                    Text(
                       'Security Question',
-                      style: KTextStyle.regi1,
-                      )
-                  ),
-                  SizedBox(height: 15,),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white
+                      ),
+                    ),
+                    SizedBox(height: 8,),
+                    Text(
                       'Please enter security questions, you can\nanswer one out of questions',
-                      style: KTextStyle.regi2,
-                    )
-                  ),
-                ],
-              ),
-            ), 
-            Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
+                        Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border(
+                              right: BorderSide(
+                                color: Colors.white,
+                              ),
+                              bottom: BorderSide(
+                                color: Colors.white
+                              )
+                            )
+                          ),
+                          child: Text(
+                            '3/3',
+                            style: TextStyle(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Column(
-                              children: [
-                                _questionTile(
-                                  title: 'What is your favourite color?', 
-                                  index: 0,
-                                  expandedChild: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16, 12, 16, 16
-                                    ),
-                                    child: TextField(
-                                      controller: answerCtrl,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Type your answer here...',
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                      ),
-                                    ),
-                                  ),
-                                  activeColor: Colors.purple,
-                                ),
-                                const Divider(height: 1,),
-                                _questionTile(
-                                  title: 'What is your favourite food?', 
-                                  index: 0,
-                                  expandedChild: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16, 12, 16, 16
-                                    ),
-                                    child: TextField(
-                                      controller: answerCtrl,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Type your answer here...',
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                      ),
-                                    ),
-                                  ),
-                                  activeColor: Colors.purple,
-                                ),
-                                _questionTile(
-                                  title: 'What is your favourite person?', 
-                                  index: 0,
-                                  expandedChild: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16, 12, 16, 16
-                                    ),
-                                    child: TextField(
-                                      controller: answerCtrl,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Type your answer here...',
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                      ),
-                                    ),
-                                  ),
-                                  activeColor: Colors.purple,
-                                ),
-                                FilledButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return NewPwPage();
-                                        },
-                                      )
-                                    );
-                                  }, 
-                                  style: FilledButton.styleFrom(
-                                    fixedSize: Size(1300, 50),
-                                    backgroundColor: Colors.deepPurple
-                                  ),
-                                  child: Text('Next')
-                                )
-                              ],
-                            ),
-                          )
+                          ),
                         )
                       ],
-                    ),
-                  )
-                ],
-              ),
-          ],
+                    )
+                  ],
+                ),
+              ), 
+              Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 25, left: 20),
+                                        child: Container(
+                                          height: 24,
+                                          width: 24,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            color: Color.fromRGBO(102, 103, 170, 1)
+                                          ),
+                                          child: Image.asset('assets/images/check.png'),
+                                        ),
+                                      ),
+                                      SizedBox(width: 9,),
+                                      Flexible(
+                                        child: _questionTile(
+                                          title: 'What is your favourite color?', 
+                                          index: 0,
+                                          expandedChild: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                              16, 12, 16, 16
+                                            ),
+                                            child: TextField(
+                                              controller: colorCtrl,
+                                              decoration: const InputDecoration(
+                                                hintText: 'Type your answer here...',
+                                              border: OutlineInputBorder(),
+                                              isDense: true,
+                                              ),
+                                            ),
+                                          ),
+                                          activeColor: Colors.purple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(height: 1,),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 25, left: 20),
+                                        child: Container(
+                                          height: 24,
+                                          width: 24,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            color: Color.fromRGBO(102, 103, 170, 1)
+                                          ),
+                                          child: Image.asset('assets/images/check.png'),
+                                        ),
+                                      ),
+                                      SizedBox(width: 9,),
+                                      Flexible(
+                                        child: _questionTile(
+                                          title: 'What is your favourite food?', 
+                                          index: 1,
+                                          expandedChild: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                              16, 12, 16, 16
+                                            ),
+                                            child: TextField(
+                                              controller: foodCtrl,
+                                              decoration: const InputDecoration(
+                                                hintText: 'Type your answer here...',
+                                              border: OutlineInputBorder(),
+                                              isDense: true,
+                                              ),
+                                            ),
+                                          ),
+                                          activeColor: Colors.purple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(height: 1,),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 25, left: 20),
+                                        child: Container(
+                                          height: 24,
+                                          width: 24,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            color: Color.fromRGBO(102, 103, 170, 1)
+                                          ),
+                                          child: Image.asset('assets/images/check.png'),
+                                        ),
+                                      ),
+                                      SizedBox(width: 9,),
+                                      Flexible(
+                                        child: _questionTile(
+                                          title: 'What is your favourite person?', 
+                                          index: 2,
+                                          expandedChild: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                              16, 12, 16, 16
+                                            ),
+                                            child: TextField(
+                                              controller: personCtrl,
+                                              decoration: const InputDecoration(
+                                                hintText: 'Type your answer here...',
+                                              border: OutlineInputBorder(),
+                                              isDense: true,
+                                              ),
+                                            ),
+                                          ),
+                                          activeColor: Colors.purple,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox( height: 300,),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context, MaterialPageRoute(
+                                          builder: (context) {
+                                            return const NewPwPage();
+                                          },
+                                        )
+                                      );
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Color.fromRGBO(102, 103, 170, 1)
+                                      ),
+                                      child: Text(
+                                        'Next',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white
+                                        ),
+                                      )
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -182,7 +299,15 @@ class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
       },
       tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       childrenPadding: EdgeInsets.zero,
-      title: Text(title),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.w300,
+          color: Color.fromRGBO(102, 103, 170, 1)
+        ),
+      ),
       trailing: Icon(
         isExpanded ? Icons.expand_less : Icons.expand_more,
       ),

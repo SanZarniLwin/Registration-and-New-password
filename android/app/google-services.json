@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "543125156826",
+    "project_id": "regi-and-pw",
+    "storage_bucket": "regi-and-pw.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543125156826:android:e464c55da29ea0676c06e3",
+        "android_client_info": {
+          "package_name": "com.example.registration_forgetpassword"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1em5jFxMW26SItp3-tJCKaLQzzNhxJ3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

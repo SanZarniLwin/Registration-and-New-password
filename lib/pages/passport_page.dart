@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_forgetpassword/data/constant.dart';
 import 'package:registration_forgetpassword/pages/ID_verify_page.dart';
 import 'package:registration_forgetpassword/pages/otp_page.dart';
 import 'package:registration_forgetpassword/pages/security_question_page.dart';

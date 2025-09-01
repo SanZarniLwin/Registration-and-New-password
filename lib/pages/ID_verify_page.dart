@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_forgetpassword/data/constant.dart';
 import 'package:registration_forgetpassword/pages/otp_page.dart';
 import 'package:registration_forgetpassword/pages/passport_page.dart';
 import 'package:registration_forgetpassword/pages/security_question_page.dart';
@@ -12,7 +11,17 @@ class IdVerifyPage extends StatefulWidget {
 }
 
 class _IdVerifyPageState extends State<IdVerifyPage> {
+
+  final nrcController = TextEditingController();
+
   String? menuItem = 'e1';
+
+  @override
+  void dispose() {
+    nrcController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,79 +29,79 @@ class _IdVerifyPageState extends State<IdVerifyPage> {
         child: Column(
           children: [
             Container(
-            padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/otpBg.png'),
-                fit: BoxFit.fitWidth,
-              )
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context, MaterialPageRoute(
-                        builder: (context) {
-                          return OTPPage();
-                        },
-                      )
-                    );
-                  }, 
-                  icon: Image.asset('assets/images/back.png')
-                ),
-                SizedBox(height: 20,),
-                Text(
-                  'ID Verification',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white
+              padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/otpBg.png'),
+                  fit: BoxFit.fitWidth,
+                )
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context, MaterialPageRoute(
+                          builder: (context) {
+                            return OTPPage();
+                          },
+                        )
+                      );
+                    }, 
+                    icon: Image.asset('assets/images/back.png')
                   ),
-                ),
-                SizedBox(height: 8,),
-                Text(
-                  'Please fill NRC information to confirm\nidentity of wallet user',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white
+                  SizedBox(height: 20,),
+                  Text(
+                    'ID Verification',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white
+                    ),
                   ),
-                ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border(
-                          right: BorderSide(
+                  SizedBox(height: 8,),
+                  Text(
+                    'Please fill NRC information to confirm\nidentity of wallet user',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border(
+                            right: BorderSide(
+                              color: Colors.white,
+                            ),
+                            bottom: BorderSide(
+                              color: Colors.white
+                            )
+                          )
+                        ),
+                        child: Text(
+                          '2/3',
+                          style: TextStyle(
                             color: Colors.white,
                           ),
-                          bottom: BorderSide(
-                            color: Colors.white
-                          )
-                        )
-                      ),
-                      child: Text(
-                        '2/3',
-                        style: TextStyle(
-                          color: Colors.white,
                         ),
-                      ),
-                    )
-                  ],
-                )
-              ],
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(40),
@@ -362,6 +371,7 @@ class _IdVerifyPageState extends State<IdVerifyPage> {
                     ],
                   ),
                   TextField(
+                    controller: nrcController,
                     decoration: InputDecoration(
                       labelText: 'Please Enter NRC Number',
                       border: OutlineInputBorder(),

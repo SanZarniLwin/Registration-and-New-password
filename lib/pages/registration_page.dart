@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:registration_forgetpassword/pages/otp_page.dart';
 import 'package:registration_forgetpassword/pages/getstart_page.dart';
@@ -10,6 +11,60 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+
+  final businessNameController = TextEditingController();
+  final businessTypeController = TextEditingController();
+  final contactNameController = TextEditingController();
+  final contactPhoneController = TextEditingController();
+  final messageController = TextEditingController();
+
+  bool agreed = false;
+  bool saving = false;
+
+  @override
+  void dispose() {
+    businessNameController.dispose();
+    businessTypeController.dispose();
+    contactNameController.dispose();
+    contactPhoneController.dispose();
+    messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveToFirestore() async {
+    setState(() => saving = true);
+    try {
+      if (businessNameController.text.trim().isEmpty ||
+          businessTypeController.text.trim().isEmpty ||
+          contactNameController.text.trim().isEmpty ||
+          contactPhoneController.text.trim().isEmpty) {
+        throw Exception('Please fill all required fields.');
+      }
+      if (!agreed) {
+        throw Exception('You must agree to the Terms and Conditions.');
+      }
+
+      await FirebaseFirestore.instance.collection('regi').add({
+        'businessName': businessNameController.text.trim(),
+        'businessType': businessTypeController.text.trim(),
+        'contactName': contactNameController.text.trim(),
+        'contactPhone': contactPhoneController.text.trim(),
+        'message': messageController.text.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      print('Data saved successfully!');
+
+      showDialog2();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Save failed: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => saving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +172,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       )
                     ),
                     TextField(
+                      controller: businessNameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -134,6 +190,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       )
                     ),
                     TextField(
+                      controller: businessTypeController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -151,6 +208,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       )
                     ),
                     TextField(
+                      controller: contactNameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -168,6 +226,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       )
                     ),
                     TextField(
+                      controller: contactPhoneController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -185,110 +244,122 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       )
                     ),
                     TextField(
+                      controller: messageController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context, 
-                          builder: (context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              actions: [
-                                Container(
-                                padding: EdgeInsets.fromLTRB(25, 8, 25, 30),
-                                color: Colors.white,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: agreed,
+                          onChanged: (v) => setState(() => agreed = v ?? false),
+                        ),
+                        const SizedBox(width: 12),
+                        TextButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context, 
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  actions: [
+                                    Container(
+                                    padding: EdgeInsets.fromLTRB(25, 8, 25, 30),
+                                    color: Colors.white,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.pushReplacement(
-                                              context, MaterialPageRoute(
-                                                builder: (context) {
-                                                  return RegistrationPage();
-                                                },
-                                              )
-                                            );
-                                          }, 
-                                          icon: Image.asset('assets/images/x.png')
-                                        )
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                Navigator.pushReplacement(
+                                                  context, MaterialPageRoute(
+                                                    builder: (context) {
+                                                      return RegistrationPage();
+                                                    },
+                                                  )
+                                                );
+                                              }, 
+                                              icon: Image.asset('assets/images/x.png')
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 8,),
+                                        Text(
+                                          'Terms and Conditions',
+                                          style: TextStyle(
+                                            fontSize: 28,
+                                            fontStyle: FontStyle.normal,
+                                            fontWeight: FontWeight.w300,
+                                            color: const Color.fromRGBO(0, 0, 0, 1)
+                                          ),
+                                        ),
+                                        SizedBox(height: 50,),
+                                        Text(
+                                          'It is a long established fact that a reader will be\ndistracted by the readable content of a page\nwhen looking at its layout.',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w300,
+                                            fontStyle: FontStyle.normal,
+                                            color: Color.fromRGBO(96, 96, 96, 1)
+                                          ),
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Text(
+                                          '(1). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w300,
+                                            fontStyle: FontStyle.normal,
+                                            color: Color.fromRGBO(96, 96, 96, 1)
+                                          ),
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Text(
+                                          '(2). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w300,
+                                            fontStyle: FontStyle.normal,
+                                            color: Color.fromRGBO(96, 96, 96, 1)
+                                          ),
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Text(
+                                          '(3). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w300,
+                                            fontStyle: FontStyle.normal,
+                                            color: Color.fromRGBO(96, 96, 96, 1)
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                    SizedBox(height: 8,),
-                                    Text(
-                                      'Terms and Conditions',
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w300,
-                                        color: const Color.fromRGBO(0, 0, 0, 1)
-                                      ),
-                                    ),
-                                    SizedBox(height: 50,),
-                                    Text(
-                                      'It is a long established fact that a reader will be\ndistracted by the readable content of a page\nwhen looking at its layout.',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w300,
-                                        fontStyle: FontStyle.normal,
-                                        color: Color.fromRGBO(96, 96, 96, 1)
-                                      ),
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      '(1). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w300,
-                                        fontStyle: FontStyle.normal,
-                                        color: Color.fromRGBO(96, 96, 96, 1)
-                                      ),
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      '(2). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w300,
-                                        fontStyle: FontStyle.normal,
-                                        color: Color.fromRGBO(96, 96, 96, 1)
-                                      ),
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      '(3). The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w300,
-                                        fontStyle: FontStyle.normal,
-                                        color: Color.fromRGBO(96, 96, 96, 1)
-                                      ),
-                                    ),
+                                  ),
                                   ],
-                                ),
-                              ),
-                              ],
+                                );
+                              },
                             );
-                          },
-                        );
-                      }, 
-                      child: Text('I agree with the Terms and Conditions')
+                          }, 
+                          child: Text('I agree with the Terms and Conditions')
+                        ),
+                      ],
                     ),
                     FilledButton(
                       style: FilledButton.styleFrom(
                         backgroundColor: Color.fromRGBO(102, 103, 170, 1),
                         fixedSize: Size(1300, 50),
                       ),
-                      onPressed: () {
-                        showDialog2();
-                      }, 
-                      child: Text('Next')
+                      onPressed: saving
+                        ? null
+                        : () async {
+                            await _saveToFirestore();
+                          }, 
+                      child: Text(saving ? 'Saving...' : 'Next')
                     ),
                   ],
                 ),
