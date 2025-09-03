@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:registration_forgetpassword/pages/ID_verify_page.dart';
 import 'package:registration_forgetpassword/pages/otp_page.dart';
@@ -11,7 +12,51 @@ class PassportPage extends StatefulWidget {
 }
 
 class _PassportPageState extends State<PassportPage> {
-  String? menuItem = 'e1';
+
+  final passportCrt = TextEditingController();
+
+  bool saving = false;
+
+  @override
+  void dispose() {
+    passportCrt.dispose();
+    super.dispose();
+  }
+
+  Future<void> _savePassportToFirestore () async {
+    setState(() => saving = true,);
+    try {
+      if (passportCrt.text.trim().isEmpty) {
+        throw Exception('Please enter Passport Number');
+      }
+
+      await FirebaseFirestore.instance.collection('passport').add({
+        'passportNumber': passportCrt.text.trim(),
+        'createAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Saved successfully'))
+      );
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context, MaterialPageRoute(
+          builder: (context) {
+            return SecurityQuestionPage();
+          },
+        )
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Saved failed: $e'))
+      );
+    } finally {
+      if (mounted) setState(() => saving = false,);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,21 +221,18 @@ class _PassportPageState extends State<PassportPage> {
                     )
                   ),
                   TextField(
+                    controller: passportCrt,
                     decoration: InputDecoration(
                       labelText: 'Please Enter Passport Number',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) {
-                            return const SecurityQuestionPage();
-                          },
-                        )
-                      );
-                    },
+                    onTap: saving 
+                        ? null 
+                        : () async {
+                        await _savePassportToFirestore();
+                      },
                     child: Container(
                       alignment: Alignment.center,
                       height: 50,
@@ -200,7 +242,7 @@ class _PassportPageState extends State<PassportPage> {
                         color: Color.fromRGBO(102, 103, 170, 1)
                       ),
                       child: Text(
-                        'Next',
+                        saving ? 'Saving...': 'Next',
                         style: TextStyle(
                           fontSize: 24,
                           fontStyle: FontStyle.normal,

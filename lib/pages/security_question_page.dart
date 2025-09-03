@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:registration_forgetpassword/pages/ID_verify_page.dart';
 import 'package:registration_forgetpassword/pages/new_pw_page.dart';
@@ -21,6 +22,42 @@ class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
     foodCtrl.dispose();
     personCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveSecurityQuestions() async {
+    Map<String, String> answerQuestions = {};
+    if (colorCtrl.text.isNotEmpty) {
+      answerQuestions['favorite_color'] = colorCtrl.text;
+    }
+    if (foodCtrl.text.isNotEmpty) {
+      answerQuestions['favorite_food'] = foodCtrl.text;
+    }
+    if (personCtrl.text.isNotEmpty) {
+      answerQuestions['favorite_person'] = personCtrl.text;
+    }
+    if (colorCtrl.text.isEmpty) {
+      print('No questions answered.');
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('security_questions').add({
+        'answers': answerQuestions,
+        'createAt': FieldValue.serverTimestamp(),
+      });
+      print('Security questions saved to Firestore successfully.');
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Saved failed'))
+      );
+    }
+  }
+
+  bool _isAtLeastOneAnswered() {
+    return colorCtrl.text.isNotEmpty ||
+          foodCtrl.text.isNotEmpty ||
+          personCtrl.text.isNotEmpty;
   }
 
   @override
@@ -237,14 +274,21 @@ class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
                                   ),
                                   SizedBox( height: 300,),
                                   GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context, MaterialPageRoute(
-                                          builder: (context) {
-                                            return const NewPwPage();
-                                          },
-                                        )
-                                      );
+                                    onTap: () async {
+                                      if (_isAtLeastOneAnswered()) {
+                                        await _saveSecurityQuestions();
+                                        Navigator.push(
+                                          context, MaterialPageRoute(
+                                            builder: (context) {
+                                              return const NewPwPage();
+                                            },
+                                          )
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Please answer at least one question'),)
+                                        );
+                                      }
                                     },
                                     child: Container(
                                       alignment: Alignment.center,

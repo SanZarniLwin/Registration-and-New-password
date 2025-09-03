@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:registration_forgetpassword/pages/otp_page.dart';
 import 'package:registration_forgetpassword/pages/passport_page.dart';
 import 'package:registration_forgetpassword/pages/security_question_page.dart';
@@ -16,10 +19,71 @@ class _IdVerifyPageState extends State<IdVerifyPage> {
 
   String? menuItem = 'e1';
 
+  String prefix = '1';
+  String region = 'Kachin';
+  String suffix = 'N';
+
+  bool saving = false;
+
+  final List<String> prefixes = List.generate(14, (i) => '${i + 1}');
+  final List<String> regions = [
+    'Kachin', 'Kayah', 'Kayin', 'Chin', 'Sagaing', 'Tanintharyi', 'Bago', 
+    'Magway', 'Mandalay', 'Mon', 'Rakhine', 'Yangon', 'Shan', 'Ayeyarwady'
+  ];
+  final List<String> suffixes = ['N', 'E'];
+
   @override
   void dispose() {
     nrcController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveIdToFirestore() async {
+    final String nrc = nrcController.text.trim();
+    if (!RegExp(r'^\d{6}$').hasMatch(nrc)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('NRC number must be exactly 6 digits.')),
+      );
+      return;
+    }
+
+    setState(() {
+      saving = true;
+    });
+
+    try {
+      final String fullNRC = '$prefix/$region($suffix)$nrc';
+
+      await FirebaseFirestore.instance.collection('nrcID').add({
+        'prefix': prefix,
+        'region': region,
+        'suffix': suffix,
+        'nrc': nrc,
+        'fullNRC': fullNRC,
+        'createAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Saved successfully')),
+      );
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context, MaterialPageRoute(
+          builder: (context) {
+            return SecurityQuestionPage();
+          },
+        )
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Save failed: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => saving = false);
+    }
+
   }
 
   @override
@@ -186,207 +250,105 @@ class _IdVerifyPageState extends State<IdVerifyPage> {
                     )
                   ),
                   Row(
-                    spacing: 15,
                     children: [
-                      Container(
-                        width: 200,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black
+                      SizedBox(
+                        width: 120,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: DropdownButton(
-                          value: menuItem,
-                          items: [
-                            DropdownMenuItem(
-                              value: 'e1',
-                              child: Text('1'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e2',
-                              child: Text('2'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e3',
-                              child: Text('3'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e4',
-                              child: Text('4'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e5',
-                              child: Text('5'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e6',
-                              child: Text('6'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e7',
-                              child: Text('7'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e8',
-                              child: Text('8'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e9',
-                              child: Text('9'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e10',
-                              child: Text('10'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e11',
-                              child: Text('11'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e12',
-                              child: Text('12'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e13',
-                              child: Text('13'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e14',
-                              child: Text('14'),
-                            ),
-                          ], 
-                          onChanged: (String? value) {
-                            setState(() {
-                              menuItem = value;
-                            });
-                          },
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: prefix,
+                            underline: const SizedBox(),
+                            items: prefixes
+                                  .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+                                  .toList(),
+                            onChanged: (v) {
+                              setState(() {
+                                prefix = v ?? prefix;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                      Container(
-                        width: 720,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black
+                      const SizedBox(width: 12,),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: DropdownButton(
-                          value: menuItem,
-                          items: [
-                            DropdownMenuItem(
-                              value: 'e1',
-                              child: Text('Kachin'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e2',
-                              child: Text('Kayah'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e3',
-                              child: Text('Kayin'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e4',
-                              child: Text('Chin'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e5',
-                              child: Text('Sagaing'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e6',
-                              child: Text('Tanintharyi'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e7',
-                              child: Text('Bago'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e8',
-                              child: Text('Magway'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e9',
-                              child: Text('Mandalay'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e10',
-                              child: Text('Mon'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e11',
-                              child: Text('Rakhine'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e12',
-                              child: Text('Yangon'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e13',
-                              child: Text('Shan'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e14',
-                              child: Text('Ayeyarwady'),
-                            ),
-                          ], 
-                          onChanged: (String? value) {
-                            setState(() {
-                              menuItem = value;
-                            });
-                          },
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: region,
+                            underline: const SizedBox(),
+                            items: regions
+                                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                                  .toList(),
+                            onChanged: (v) {
+                              setState(() {
+                                region = v ?? region;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                      Container(
-                        width: 200,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black
+                      const SizedBox(width: 12,),
+                      SizedBox(
+                        width: 100,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: DropdownButton(
-                          value: menuItem,
-                          items: [
-                            DropdownMenuItem(
-                              value: 'e1',
-                              child: Text('N'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'e2',
-                              child: Text('E'),
-                            ),
-                          ], 
-                          onChanged: (String? value) {
-                            setState(() {
-                              menuItem = value;
-                            });
-                          },
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: suffix,
+                            underline: const SizedBox(),
+                            items: suffixes
+                                  .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                                  .toList(),
+                            onChanged: (v) {
+                              setState(() {
+                                suffix = v ?? suffix;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                   TextField(
                     controller: nrcController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(6),
+                    ],
                     decoration: InputDecoration(
                       labelText: 'Please Enter NRC Number',
                       border: OutlineInputBorder(),
+                      counterText: '',
                     ),
                   ),
+                  const SizedBox(width: 20,),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) {
-                            return const SecurityQuestionPage();
-                          },
-                        )
-                      );
-                    },
+                    onTap: saving 
+                        ? null 
+                        : () async {
+                        await _saveIdToFirestore();
+                      },
                     child: Container(
                       alignment: Alignment.center,
                       height: 50,
@@ -396,7 +358,7 @@ class _IdVerifyPageState extends State<IdVerifyPage> {
                         color: Color.fromRGBO(102, 103, 170, 1)
                       ),
                       child: Text(
-                        'Next',
+                        saving ? 'Saving...': 'Next',
                         style: TextStyle(
                           fontSize: 24,
                           fontStyle: FontStyle.normal,
