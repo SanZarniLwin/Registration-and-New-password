@@ -35,10 +35,6 @@ class _SecurityQuestionPageState extends State<SecurityQuestionPage> {
     if (personCtrl.text.isNotEmpty) {
       answerQuestions['favorite_person'] = personCtrl.text;
     }
-    if (colorCtrl.text.isEmpty) {
-      print('No questions answered.');
-      return;
-    }
 
     try {
       await FirebaseFirestore.instance.collection('security_questions').add({

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:registration_forgetpassword/pages/security_question_page.dart';
 
@@ -13,6 +14,36 @@ class _NewPwPageState extends State<NewPwPage> {
   final TextEditingController controllerNPw = TextEditingController();
   final TextEditingController controllerCPw = TextEditingController();
   String activeField = "new";
+
+  bool saving = false;
+
+  Future<void> _saveToFirestore() async {
+    setState(() {
+      saving = true;
+    });
+    try {
+      if (controllerNPw.text.trim().isEmpty ||
+          controllerCPw.text.trim().isEmpty) {
+        throw Exception('Please enter passwords');
+      }
+      if (controllerNPw.text != controllerCPw.text) {
+        throw Exception('Passwords must be the same');
+      }
+
+      await FirebaseFirestore.instance.collection('usersPW').add({
+        'newPassword': controllerNPw.text,
+        'createAt': FieldValue.serverTimestamp(),
+      });
+      print('Password saved successfully');
+      showDialog2();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Saved failed: $e'))
+      );
+    } finally {
+      if (mounted) setState(() => saving = false);
+    }
+  }
 
   void onNumberPressed(String number) {
     setState(() {
@@ -227,12 +258,99 @@ class _NewPwPageState extends State<NewPwPage> {
                         Expanded(child: Container(child: IconButton(onPressed: () => deleteNumber(), icon: Icon(Icons.backspace))))
                       ],
                     ),
+                    SizedBox(height: 20,),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: saving ? null : _saveToFirestore,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(102, 103, 170, 1),
+                        ),
+                        child: Text(
+                          saving ? 'Saving...' : 'Confirm',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
+                          ),
+                        )
+                      ),
+                    )
                   ],
                 ),
               )
             ],
           ),
       ),
+    );
+  }
+  void showDialog2() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          actions: [
+            Container(
+              padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Color.fromRGBO(102, 103, 170, 1)
+                    ),
+                    child: Image.asset('assets/images/cong.png'),
+                  ),
+                  SizedBox(height: 30,),
+                  Text(
+                    'Password Update',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black
+                    ),
+                  ),
+                  SizedBox(height: 8,),
+                  Text(
+                    'You\'ve updated password\nsuccessfully',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w300,
+                      color: Color.fromRGBO(96, 96, 96, 1)
+                    ),
+                  ),
+                  SizedBox(height: 30,),
+                  Container(
+                    alignment: Alignment.center,
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Color.fromRGBO(102, 103, 170, 1)
+                    ),
+                    child: Text(
+                      'Ok',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    )
+                  )
+                ],
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
